@@ -21,30 +21,30 @@ so two files that differ by a few clips are not distinguished by either board.
 ## Every submission
 
 Twenty-seven files were scored between 12 August and 14 September 2026, each spent to
-answer a question rather than to search. Private scores are listed where they were
-read from the submissions page after the reveal (the entries from 020 onward).
+answer a question rather than to search. Private scores were read from the submissions
+page after the reveal; one private clip is 0.4902 points.
 
 | # | Date | Public | Private | What it was and what it tested |
 |---|---|---|---|---|
-| 001 | 12 Aug | 0.10945 | | Constant class 36 for every clip, emitted by `inference.sh` before any model existed. Proved the submission path; corroborated the public split at 201 clips. |
-| 002 | 15 Aug | 0.41791 | | First real model: ResNet-18 with a temporal shift module at 120 x 160, depth + infrared and thermal branches fused, flip test-time augmentation, one fold. |
-| 003 | 16 Aug | 0.42786 | | 002 with its bookkeeping fixed (it had shipped one fold while quoting a 3-fold mean). Gave the first validation-to-leaderboard constant. |
-| 004 | 17 Aug | 0.61691 | | The backbone pivot: S3D pretrained on Kinetics-400 at 168 x 224, both branches retrained. The largest single move of the project, +38 clips. |
-| 005 | 17 Aug | 0.61194 | | The fold axis priced: five members across folds. One clip worse; the axis buys nothing measurable. |
-| 006 | 17 Aug | 0.61194 | | Architectural diversity: four S3D members plus one MC3-18. Same score as 005. |
-| 007 | 17 Aug | 0.61194 | | The seed-2 twin of 004, predicted in writing at 122 of 201 clips; scored 123. |
-| 008 | 18 Aug | 0.62189 | | Every member trained on all 18 subjects instead of a fold's 12. New best by one clip. |
-| 009 | 18 Aug | 0.61691 | | 008's weights with the fusion temperature at 16. Lost a clip: a validation gain of +1.147 points that did not transfer. |
-| 010 | 18 Aug | 0.63681 | | Self-training: 142 test clips at confidence 0.7 or more join training, temperature 16. |
-| 011 | 18 Aug | 0.64179 | | 010's weights with the temperature back at 1. New best. |
-| 012 | 18 Aug | 0.64179 | | Self-training round two (168 clips). Identical score across a 51-clip churn: the second round nets nothing. |
-| 013 | 19 Aug | 0.61691 | | Pseudo-label threshold 0.5 (204 clips): five clips below 011. Purity dominates volume. |
+| 001 | 12 Aug | 0.10945 | 0.10294 | Constant class 36 for every clip, emitted by `inference.sh` before any model existed. Proved the submission path; corroborated the public split at 201 clips. |
+| 002 | 15 Aug | 0.41791 | 0.42156 | First real model: ResNet-18 with a temporal shift module at 120 x 160, depth + infrared and thermal branches fused, flip test-time augmentation, one fold. |
+| 003 | 16 Aug | 0.42786 | 0.44607 | 002 with its bookkeeping fixed (it had shipped one fold while quoting a 3-fold mean). Gave the first validation-to-leaderboard constant. |
+| 004 | 17 Aug | 0.61691 | 0.65686 | The backbone pivot: S3D pretrained on Kinetics-400 at 168 x 224, both branches retrained. The largest single move of the project, +38 clips. |
+| 005 | 17 Aug | 0.61194 | 0.65196 | The fold axis priced: five members across folds. One clip worse; the axis buys nothing measurable. |
+| 006 | 17 Aug | 0.61194 | 0.64215 | Architectural diversity: four S3D members plus one MC3-18. Same score as 005. |
+| 007 | 17 Aug | 0.61194 | 0.64215 | The seed-2 twin of 004, predicted in writing at 122 of 201 clips; scored 123. |
+| 008 | 18 Aug | 0.62189 | 0.62745 | Every member trained on all 18 subjects instead of a fold's 12. New best by one clip. |
+| 009 | 18 Aug | 0.61691 | 0.63235 | 008's weights with the fusion temperature at 16. Lost a clip: a validation gain of +1.147 points that did not transfer. |
+| 010 | 18 Aug | 0.63681 | 0.66666 | Self-training: 142 test clips at confidence 0.7 or more join training, temperature 16. |
+| 011 | 18 Aug | 0.64179 | 0.65196 | 010's weights with the temperature back at 1. New best. |
+| 012 | 18 Aug | 0.64179 | 0.64705 | Self-training round two (168 clips). Identical score across a 51-clip churn: the second round nets nothing. |
+| 013 | 19 Aug | 0.61691 | 0.69117 | Pseudo-label threshold 0.5 (204 clips): five clips below 011. Purity dominates volume. |
 | 014 | | | | Reserved for the threshold-0 arm; never submitted. |
-| 015 | 19 Aug | 0.59701 | | Threshold 0.85 (84 clips): nine clips below 011, the worst of the family. |
-| 016 | 20 Aug | 0.68159 | | The first ir-CSN-R50 members (IG-65M to Kinetics-400), +8 clips over 011. |
-| 017 | 21 Aug | 0.68656 | | Self-training removed on the new backbone. New best by one clip: removing it cost nothing. |
-| 018 | 21 Aug | 0.71144 | | The operating point re-derived for the new family: learning rate 5 x 10^-4, T = 16, 224 x 224, batch 12; two depth + infrared seeds and one thermal member, all on 18 subjects. |
-| 019 | 26 Aug | 0.71144 | | 018 with the thermal member retrained under the temporal crop augmentation. |
+| 015 | 19 Aug | 0.59701 | 0.64215 | Threshold 0.85 (84 clips): nine clips below 011, the worst of the family. |
+| 016 | 20 Aug | 0.68159 | 0.72058 | The first ir-CSN-R50 members (IG-65M to Kinetics-400), +8 clips over 011. |
+| 017 | 21 Aug | 0.68656 | 0.69117 | Self-training removed on the new backbone. New best by one clip: removing it cost nothing. |
+| 018 | 21 Aug | 0.71144 | 0.71078 | The operating point re-derived for the new family: learning rate 5 x 10^-4, T = 16, 224 x 224, batch 12; two depth + infrared seeds and one thermal member, all on 18 subjects. |
+| 019 | 26 Aug | 0.71144 | 0.72549 | 018 with the thermal member retrained under the temporal crop augmentation. |
 | 020 | 27 Aug | 0.71144 | 0.75000 | 018 with the thermal member retrained under SWAD and the temporal crop. |
 | 021 | 28 Aug | 0.71641 | 0.73529 | 020 with the thermal member at T = 32. |
 | 022 | 29 Aug | 0.76616 | 0.76960 | One depth + infrared ir-CSN-R50 member and one ir-CSN-152 thermal member at T = 32 with SWAD and the temporal crop. Public best for two weeks; a final. |
@@ -55,13 +55,18 @@ read from the submissions page after the reveal (the entries from 020 onward).
 | 026 | 13 Sep | 0.78606 | 0.78921 | 022 with the thermal member retrained on frames decoded at the native 320 x 240 and a 320 x 320 input. A final. |
 | 027 | 14 Sep | 0.76119 | 0.78431 | 026 with the depth + infrared member also retrained at native resolution. |
 
-Two observations from the private column. First, the ordering of the two finals
-held: 026 scored above 022 on both halves. Second, the two halves disagreed
+Three observations from the private column. First, the ordering of the two finals
+held: 026 scored above 022 on both halves, and the three backbone families kept
+their order on both halves (the best file of each, 003, 013 and 026, scored 91, 141 and
+161 private clips). Second, the two halves disagreed
 strongly for some candidates: the ViT-B container 025 scored 144 of 201 clips
 publicly and 159 of 204 privately, and the pseudo-labelled 023 and the fusion-rule
 twin 024 both scored 158 privately against 149 and 152 publicly. On 204 clips those
-differences are one to three standard errors. The two finals were selected before
-either private score existed, by the rules in [experiments-summary.md](experiments-summary.md).
+differences are one to three standard errors. Third, the same pattern held earlier in
+the project: the pseudo-label arms 013 and 016 scored 141 and 147 private clips against
+124 and 137 public ones, so the public half under-read that family throughout. The two
+finals were selected before any private score existed, by the rules in
+[experiments-summary.md](experiments-summary.md).
 
 ## Candidates against the ranges written before their scores
 
