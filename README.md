@@ -12,7 +12,7 @@ returns the activity. It is two 3D convolutional networks packaged in one file o
 
 | CUHK-X 2026 Small Model Track | Score | Clips correct |
 |---|---|---|
-| Private leaderboard (the scored one), **39th place** | **0.78921** | 161 of 204 |
+| Private leaderboard (the scored one), **39th of 326 teams** | **0.78921** | 161 of 204 |
 | Public leaderboard | 0.78606 | 158 of 201 |
 
 Both scores belong to submission 026, the default model of this repository. The

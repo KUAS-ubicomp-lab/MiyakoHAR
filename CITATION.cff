@@ -10,7 +10,7 @@ abstract: >-
   Team MiyakoHAR's solution to the CUHK-X 2026 Multimodal Human Activity Challenge,
   Small Model Track: two channel-separated 3D convolutional networks (ir-CSN-R50 on the
   depth and infrared streams, ir-CSN-152 on the thermal stream) fused at the probability
-  level and packaged in one 83.6 MB file. Private leaderboard score 0.78921, 39th place.
+  level and packaged in one 83.6 MB file. Private leaderboard score 0.78921, 39th of 326 teams.
 authors:
   - family-names: Koo
     given-names: Joseph Arthur

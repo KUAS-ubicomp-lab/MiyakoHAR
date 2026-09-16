@@ -11,12 +11,19 @@ of the two counts.
 
 | Final submission | Private score | Public score | Role in this repository |
 |---|---|---|---|
-| **026** `026_hr320_person_pixels.csv` | **0.78921** (161 of 204), **39th place** | 0.78606 (158 of 201) | the default model, `model-026.pth` |
+| **026** `026_hr320_person_pixels.csv` | **0.78921** (161 of 204), **39th of 326 teams** | 0.78606 (158 of 201) | the default model, `model-026.pth` |
 | 022 `022_r152_fence.csv` | 0.76960 (157 of 204) | 0.76616 (154 of 201) | the reference training build, `model-022.pth` |
 
 One clip is worth 0.4975 points on the public board and 0.4902 points on the
 private board. The standard error of a score at this accuracy is about six clips,
 so two files that differ by a few clips are not distinguished by either board.
+
+The final private leaderboard, read after the competition closed, lists 326 teams.
+The winning score was 0.98529 (201 of 204 clips) and the fifteenth place, the cut
+for the finalist selection stage, was 0.87745 (179 of 204), eighteen clips above
+the team's score. The team rose four places from its public standing to 39th, and
+shares its private score with the team ranked 38th, which submitted 41 entries to
+the team's 27. The team's other final, 022, would have placed 48th on its own.
 
 ## Every submission
 

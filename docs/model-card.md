@@ -59,7 +59,7 @@ training, scored as 201 public and 204 private clips by the organisers.
 
 | Model | Private score | Public score |
 |---|---|---|
-| 026 (default) | 0.78921 (161 of 204), 39th place | 0.78606 (158 of 201) |
+| 026 (default) | 0.78921 (161 of 204), 39th of 326 teams | 0.78606 (158 of 201) |
 | 022 | 0.76960 (157 of 204) | 0.76616 (154 of 201) |
 
 **Held-out subjects, our own instrument.** On the frozen 3-fold split, each fold
