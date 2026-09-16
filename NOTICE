@@ -1,0 +1,578 @@
+MiyakoHAR — CUHK-X Multimodal Human Activity Challenge 2026, Small Model Track
+Copyright 2026 Kyoto University of Advanced Science, ubicomp-lab
+
+This product includes software developed by the MiyakoHAR team, licensed under
+the Apache License, Version 2.0 (see LICENSE).
+
+================================================================================
+THIRD-PARTY COMPONENTS
+================================================================================
+
+Per competition IP clause 6, third-party software that we do not own is exempt
+from our Apache-2.0 grant PROVIDED IT IS CLEARLY IDENTIFIED. This file is that
+identification and is maintained from commit 1, not written at submission time.
+
+Every entry must carry a licence and a verification status before the component
+is imported anywhere in this repository.
+
+--------------------------------------------------------------------------------
+RUNTIME DEPENDENCIES (present in the inference path)
+--------------------------------------------------------------------------------
+
+PyTorch (torch)
+    Licence:  BSD-3-Clause
+    Version:  2.13.0+cu129
+    Source:   https://github.com/pytorch/pytorch/blob/main/LICENSE
+    Status:   VERIFIED 2026-08-15 (measurement 68), FROM THE INSTALLED ARTEFACT
+              rather than from the upstream URL — .dist-info/licenses/LICENSE
+              in the wheel we actually import. 3,464 bytes, carries the BSD
+              redistribution and no-endorsement clauses, and a scan for
+              "GNU General Public | Affero | non-commercial | research only"
+              returns ZERO hits.
+
+TorchVision (torchvision), including pretrained weights
+    Licence:  BSD-3-Clause
+    Source:   https://github.com/pytorch/vision/blob/main/LICENSE
+    Status:   VERIFIED 2026-08-12 (measurement M-04). The repository LICENSE
+              draws no distinction between source code and pretrained weights;
+              there is no separate weights licence and no copyleft carve-out.
+    Used for: ImageNet-pretrained ResNet-18 backbone (decision D1);
+              SSDLite320 MobileNetV3-Large COCO detector (decision D7), which
+              may be dropped pending measurement M-16.
+    Note:     The COCO-trained detection weights carry no terms-of-use statement
+              on their model card. The operative licence on the artefact as
+              distributed is torchvision's BSD-3-Clause.
+
+NumPy
+    Licence:  BSD-3-Clause
+    Version:  2.4.4
+    Source:   https://github.com/numpy/numpy/blob/main/LICENSE.txt
+    Status:   VERIFIED 2026-08-15 (measurement 68) from the installed wheel's
+              own bundled licence file (46,794 bytes).
+    Note:      The bundled file DOES contain GPL text and it is not a problem.
+              It covers `numpy.libs/libgfortran*.so`, declared
+              "GPL-3.0-or-later WITH GCC-exception-3.1" — the GCC Runtime
+              Library Exception, whose own stated purpose is verbatim "to allow
+              compilation of non-GPL (including proprietary) programs to use ...
+              the header files and runtime libraries covered by this Exception."
+              It is a dynamically linked runtime inside the wheel, not source we
+              vendor, and it places no copyleft obligation on this repository.
+              Recorded because a future reader grepping this wheel for "GPL"
+              WILL find hits, and the answer should be here rather than
+              re-derived under time pressure.
+
+Pillow
+    Licence:  MIT-CMU (HPND)
+    Version:  12.2.0
+    Source:   https://github.com/python-pillow/Pillow/blob/main/LICENSE
+    Status:   VERIFIED 2026-08-15 (measurement 68) from the installed wheel's
+              own bundled licence file (68,065 bytes).
+    Note:      Two "GNU General Public License" strings appear and neither is
+              an obligation: both sit inside the bundled XZ Utils / liblzma
+              notice, which declares that code PUBLIC DOMAIN and is merely
+              listing which licence texts ship in ITS source package.
+
+SciPy
+    Licence:  BSD-3-Clause
+    Version:  1.18.0
+    Source:   https://github.com/scipy/scipy/blob/main/LICENSE.txt
+    Status:   VERIFIED 2026-08-15 (measurement 68) from the installed wheel's
+              own bundled licence file (46,845 bytes). Same libgfortran /
+              GCC-exception-3.1 note as NumPy above; same conclusion.
+    Used for: scipy.ndimage.label — connected-component labelling in the
+              zero-dependency person crop (decision D7 / measurement M-16).
+              Approved by Arthur 2026-08-13, overruling the alternative of a
+              hand-written union-find.
+    Note:     DEVELOPMENT ONLY since the person crop left the shipped path:
+              no released model applies a crop, inference.sh -> src/predict.py
+              never imports src/person_crop.py, and scipy is not in
+              requirements.txt. Verified 2026-09-16: a fresh virtual environment
+              holding only the four pinned packages reproduced both submitted
+              CSVs byte for byte. Until 2026-09-16 this note said the component
+              was in the inference path; corrected on that date. It adds no
+              bytes to the model artefact.
+
+--------------------------------------------------------------------------------
+PRETRAINED WEIGHTS — each artefact, with its source, licence and fp32 size
+--------------------------------------------------------------------------------
+
+MASTER.md §5 requires a pretrained-weight entry "at the moment of use", with
+source URL, licence and fp32 size. Until 2026-08-15 there was NO such entry
+anywhere in this file, while three sets of weights were already being loaded.
+Added as measurement 68; sizes are BYTES ON DISK of the downloaded artefact,
+weighed, not computed from a parameter count — the error class measurement 61
+caught and TARGETING.md §2.3 caught again.
+
+All torchvision weights are covered by torchvision's own BSD-3-Clause, which
+draws no source/weights distinction (measurement M-04, VERIFIED 2026-08-12).
+
+torchvision · ResNet-18 · ImageNet-1k     [NOT in the shipped path since 004]
+    Weights:  ResNet18_Weights.IMAGENET1K_V1
+    Source:   https://download.pytorch.org/models/resnet18-f37072fd.pth
+    Licence:  BSD-3-Clause (torchvision)
+    Size:     46,830,571 B on disk · 11,689,512 params · 46.76 MB fp32
+    Used for: the depthir and thermal branch backbones up to submission 003.
+              CORRECTED 2026-08-17 (m92). This entry read "[IN THE SHIPPED
+              PATH today]" until now, which stopped being true at m69/m75 when
+              J1 ruled the s3d pivot and submission 004 shipped it. Every
+              submission from 004 onward carries NO ResNet-18 weights.
+
+torchvision · S3D · Kinetics-400               [IN THE SHIPPED PATH today]
+    Weights:  S3D_Weights.KINETICS400_V1
+    Source:   https://download.pytorch.org/models/s3d-d76dad2f.pth
+    Licence:  BSD-3-Clause (torchvision)
+    Size:     33,524,997 B on disk · 8,320,048 params · 33.28 MB fp32
+    Used for: BOTH branch backbones (depthir and thermal) in submissions 004,
+              005, 006, 007 and 008 — the pivot J1 ruled at m69.
+    Note:     torchvision's published 68.37% K400 top-1 is a ONE-VIEW number
+              (clips_per_video=1). Do not compare it to a 30-view figure from
+              another zoo — TARGETING.md §3.2.
+
+mmaction2 · ir-CSN-R50 · IG-65M -> Kinetics-400    [IN THE SHIPPED PATH from 016]
+    Weights:  ircsn_ig65m-pretrained-r50-bnfrozen_8xb12-32x2x1-58e_kinetics400-rgb
+              _20220811-44395bae.pth
+    Source:   https://download.openmmlab.com/mmaction/v1.0/recognition/csn/
+              ircsn_ig65m-pretrained-r50-bnfrozen_8xb12-32x2x1-58e_kinetics400-rgb/
+              ircsn_ig65m-pretrained-r50-bnfrozen_8xb12-32x2x1-58e_kinetics400-rgb
+              _20220811-44395bae.pth
+    Licence:  Apache-2.0 (OpenMMLab / mmaction2) <- Apache-2.0 (VMZ, the CSN
+              authors' original release)
+    Size:     52,855,745 B on disk · 13.13 M params w/ its 400-way head ·
+              12.31 M backbone-only · 50.41 MB fp32
+    Used for: ALL THREE branch backbones of submissions 016 AND 017 -- 2 x
+              depthir (seeds 1,2) + 1 x thermal, the shape m123/m124 ruled on.
+              016 trains those members on 18 subjects + the round-1 pseudo-label
+              set; 017 is the same three members on the 18 subjects alone. Same
+              weights file, same licence, two artefacts.
+    Status:   VERIFIED 2026-08-20 (m123/m124) BY THE m99 PROCEDURE, FROM FETCHED
+              ARTEFACTS RATHER THAN FROM MEMORY:
+              (a) mmaction2's own LICENSE file fetched and read -- Apache License
+                  2.0, "Copyright 2018-2019 Open-MMLab. All rights reserved."
+              (b) configs/recognition/csn/metafile.yml fetched; THIS EXACT
+                  checkpoint is documented at line 55 as mmaction2's own trained
+                  release, so the repository licence attaches to the file rather
+                  than being inferred by neighbourhood.
+              (c) NEGATIVE grep for `non-commercial|research only|CC-BY-NC|
+                  academic use only` over that LICENSE: 0 hits.
+              (d) POSITIVE CONTROL, which is what makes (c) evidence instead
+                  of silence: the identical grep over ~/cuhk-x/LICENSE (the
+                  dataset's own non-commercial terms) returns 10 hits. A clean
+                  grep whose control does not fire is not a check -- m59.
+    Note:      A SECOND ir-CSN-R50 FILE EXISTS AND IS DELIBERATELY NOT SHIPPED.
+              ircsn_from_scratch_r50_ig65m_20210617-ce545a37.pth (49,516,800 B,
+              pure IG-65M, no K400 fine-tune) has NO metafile row in mmaction2
+              `main` or `0.x`, so its licence chain is VERIFIED-single and
+              UNATTACHED to the artefact. It was used ONLY for the m118 frozen
+              probe, never in an inference path, and it must not ship until that
+              chain is attached.
+    Note:     K400 top-1 79.44 is a 10-clip x 3-crop number and is NOT comparable
+              to torchvision S3D's one-view 68.37 above -- the §3.2 protocol trap.
+              It is quoted here for provenance, never as a contrast.
+
+OUR OWN VENDORED CODE DERIVED FROM mmaction2
+    File:     src/csn.py
+    Derived:  from mmaction2's ResNet3dCSN / ResNet3d structure (Apache-2.0,
+              Copyright (c) OpenMMLab), reimplemented so the published
+              state_dict loads with strict=True and no key remapping.
+    Licence:  Apache-2.0 retained; attribution carried in the file's own header.
+    Note:     NO NEW PIP DEPENDENCY WAS ADDED. mmaction2 was used as SOURCE, not
+              as a package -- it would otherwise pull mmcv + mmengine + a model
+              registry into the inference path. This follows m99's precedent for
+              the r2plus1d-34 teacher builder. tests/check_model.py asserts that
+              neither `mmaction` nor `pytorchvideo` is importable from the
+              inference path.
+
+    File:     src/vmae.py
+    Derived:  from mmaction2's VideoMAE V2 ViT structure (Apache-2.0, Copyright
+              (c) OpenMMLab; mmaction2's re-host of OpenGVLab's VideoMAE V2,
+              upstream MIT), reimplemented on the same precedent as src/csn.py so
+              the published state_dict loads with strict=True and no key
+              remapping. The weights entry is below under VideoMAE V2 ViT-S/16.
+    Licence:  Apache-2.0 retained (mmaction2's re-host); attribution carried in
+              the file's own header.
+    Note:     DEVELOPMENT ONLY (QUEUE §68, D23) -- a probe / teacher path. It is
+              NOT part of either shipped artefact: both load exactly two ir-CSN
+              members, and src/model.py reaches the VideoMAE branch only when a
+              checkpoint declares one, which neither final does. Added 2026-09-14
+              (m430) after an audit of the honor declaration found this file
+              vendored but unnamed here.
+
+torchvision · MC3-18 · Kinetics-400      [SHIPPED IN 006; not in 008's set]
+    Weights:  MC3_18_Weights.KINETICS400_V1
+    Source:   https://download.pytorch.org/models/mc3_18-a90a0ba3.pth
+    Licence:  BSD-3-Clause (torchvision)
+    Size:     46,841,888 B on disk · 11,705,060 params · 46.84 MB fp32
+    Used for: the fifth, architecture-diverse member of submission 006 (m78/m80).
+              ADDED 2026-08-17 (m92), LATE. §10 requires a NOTICE entry at
+              the MOMENT OF USE, and this weight was wired at m78 and SUBMITTED
+              in 006 with no entry here at all. The licence was never in doubt
+              — it is torchvision's own BSD-3, the same M-04 clearance as every
+              entry above — but the obligation is the record, not the belief.
+              Same m78 commit also skipped tests/check_swa.py's HEAD_PARAM
+              registration (m88): one commit, two skipped registrations.
+
+IG-65M · R(2+1)D-34 · K400-finetuned      [J8 TEACHER — TRAINING ONLY, NEVER SHIPPED]
+    Weights:  r2plus1d_34_clip8_ft_kinetics_from_ig65m-0aa0550b.pth
+    Source:   https://github.com/moabitcoin/ig65m-pytorch/releases/download/v1.0.0/
+              r2plus1d_34_clip8_ft_kinetics_from_ig65m-0aa0550b.pth
+    Licence:  MIT (moabitcoin/ig65m-pytorch) over Apache-2.0 (facebookresearch/VMZ)
+    Size:     255,061,565 B on disk · 63,747,500 tensor elements · 243.25 MB fp32
+    sha256:   0aa0550bffca39e1fdb81064a3f68983648618e6c3f1b58753a8e8d186cca88d
+    Used for: the J8 distillation teacher. Its logits are cached OFFLINE and the
+              student learns from the cache; the teacher is never co-resident with
+              student training (hardware scar #2), never in the inference path, and
+              NO TEACHER BYTE SHIPS (D1/R3, R9).
+    Stored:   ~/teacher/ — deliberately OUTSIDE the repository. 243 MB is 2.5x the
+              entire D6 budget; it must not be one `git add -A` from the tree.
+    Verified 2026-08-18 (m99), from the artefact and its own distribution rather
+    than from a badge, per §10's m68 standard:
+      · size on disk == TARGETING §3.6's recorded 255,061,565 B, exactly;
+        sha256 matches the filename's own 0aa0550b hash prefix
+      · loads strict=True into an R(2+1)D-34 built from torchvision primitives —
+        NO new dependency added; params+buffers == the checkpoint's tensor total
+        exactly (63,747,500)
+      · moabitcoin LICENSE.md fetched (1,067 B, MIT; SPDX confirmed via the API)
+        and facebookresearch/VMZ LICENSE fetched (10,255 B, Apache-2.0)
+      · BOTH grepped for non-commercial / research-only / CC-BY-NC / academic-use-
+        only: ZERO hits, against a positive control on the same grep returning 4
+        and 37 hits, so the zero is a measurement and not a broken pattern
+      · neither repo says anything affirmative about the WEIGHTS, so they inherit
+        by silence — the identical posture M-04 already ruled for torchvision's
+        COCO weights. That precedent is applied, not re-argued.
+
+torchvision · MobileNetV2 · ImageNet-1k          [MEASUREMENT ONLY, not shipped]
+    Weights:  MobileNet_V2_Weights.IMAGENET1K_V1
+    Source:   https://download.pytorch.org/models/mobilenet_v2-b0353104.pth
+    Licence:  BSD-3-Clause (torchvision)
+    Size:     14,212,972 B on disk · 3,504,872 params · 14.02 MB fp32
+    Used for: the ImageNet control arm of the corpus-isolating A/B.
+
+MMAction2 · TSM-MobileNetV2 · Kinetics-400       [MEASUREMENT ONLY, not shipped]
+    Source:   https://download.openmmlab.com/mmaction/v1.0/recognition/tsm/
+              tsm_imagenet-pretrained-mobilenetv2_8xb16-1x1x8-100e_kinetics400-rgb/
+              tsm_imagenet-pretrained-mobilenetv2_8xb16-1x1x8-100e_kinetics400-rgb
+              _20230414-401127fd.pth
+    Licence:  Apache-2.0 (MMAction2). No weights carve-out.
+              https://github.com/open-mmlab/mmaction2/blob/main/LICENSE
+    Size:     11,199,437 B on disk · 2,770,436 elements (400-class head)
+    sha256:   401127fd339782fd37a83a749d53cd690aa0b3319d71166ab4b5f326d87aa517
+              the vendor's own filename stamp "-401127fd" IS the sha256
+              prefix, so the download self-verifies.
+    Loads:    with plain torch.load. mmaction, mmcv and mmengine are NOT
+              installed and are NOT required — this adds ZERO dependency.
+    Used for: the Kinetics-400 arm of the corpus-isolating A/B. Key-mapped onto
+              torchvision's mobilenet_v2 by tools/map_tsm_mbv2.py, gated at
+              312/312 with 0 missing / 0 unexpected / 0 shape-mismatch.
+    Note:      its own meta declares pretrained='mmcls://mobilenet_v2', i.e.
+              this checkpoint is ImageNet-INITIALISED and then trained on K400.
+              The A/B therefore measures "ImageNet + K400" against "ImageNet
+              alone". State it that way; it is the marginal intervention.
+
+torchvision · SSDLite320 MobileNetV3-Large · COCO       [NOT WIRED IN — D7/M-16]
+    Source:   https://download.pytorch.org/models/
+              ssdlite320_mobilenet_v3_large_coco-a79551df.pth
+    Licence:  BSD-3-Clause (torchvision), M-04 VERIFIED
+    Size:     14,069,355 B on disk
+    Status:   Ruled OUT of the shipped path by M-16 (the zero-dependency depth
+              box won). Retained ONLY as cache/ssdlite_ref.csv, the external
+              reference tests/check_crop.py scores the depth box against. If
+              the packaged submission ever contains these bytes, that is a bug.
+
+--------------------------------------------------------------------------------
+TRAINING-ONLY DEPENDENCIES (not in the inference path)
+--------------------------------------------------------------------------------
+
+pandas
+    Licence:  BSD-3-Clause
+    Source:   https://github.com/pandas-dev/pandas/blob/main/LICENSE
+    Status:   DECLARED BUT NOT INSTALLED as of 2026-08-13. The crop cache is
+              written as CSV rather than parquet specifically to avoid it.
+              Do not import without a relay PROPOSE.
+
+PyYAML
+    Licence:  MIT
+    Source:   https://github.com/yaml/pyyaml/blob/main/LICENSE
+    Version:  6.0.3
+    Status:   INSTALLED 2026-08-13, TRAINING PATH ONLY. This is the revisit the
+              previous entry called for.
+              WHY: dataset.py must read splits/folds.yaml, the frozen 3-fold.
+              The alternative was a hand-rolled parser, which would put bespoke
+              code in front of the single most safety-critical file in the
+              project -- a misread there is a silent subject leak that inflates
+              every number we ever report and never raises. An MIT, pure-Python,
+              already-declared parser is the smaller risk.
+              THE INFERENCE PATH MUST STAY YAML-FREE. inference.sh ->
+              predict.py parses no YAML and must not start: the checkpoint
+              carries everything predict.py needs. Asserted by
+              tests/test_inference_robustness.sh, which runs on a venv without
+              this import reachable from the submission path.
+              Contributes ZERO bytes to the <=100 MB model artefact.
+
+--------------------------------------------------------------------------------
+EXCLUDED BY RULING — DO NOT ADD
+--------------------------------------------------------------------------------
+
+Ultralytics / YOLO
+    Licence:  AGPL-3.0. Cannot be relicensed to the Apache-2.0 we owe under
+              competition IP clause 5. Excluded by decision D7. The public
+              0.711 baseline notebook uses it; we do not.
+
+Any GPL- or AGPL-licensed component.
+
+--------------------------------------------------------------------------------
+ALGORITHMS IMPLEMENTED FROM PUBLICATIONS (no third-party code vendored)
+--------------------------------------------------------------------------------
+
+Temporal Shift Module (TSM) — Lin, Gan & Han, ICCV 2019.
+    Implemented in this repository from the paper. No code from the authors'
+    repository is copied or linked. Cited in the technical report.
+
+================================================================================
+DATASET — NOT COVERED BY THIS REPOSITORY'S LICENCE
+================================================================================
+
+CUHK-X dataset
+    Owner:    The Chinese University of Hong Kong (CUHK) — AIoT Lab,
+              Department of Information Engineering.
+    Licence:  CUHK-X License Version 2.0. Non-commercial research use only;
+              derived annotations, splits and metadata under CC BY-NC 4.0.
+    Status:   VERIFIED 2026-08-12 by reading the shipped LICENSE file.
+
+    THE DATASET IS NOT REDISTRIBUTABLE (dataset licence section 5.2). No corpus
+    file, frame, checkpoint derived from raw data other than model weights, or
+    any direct extraction from the dataset may be committed to this repository.
+    Attribution to the CUHK AIoT Lab is required in any resulting publication
+    or presentation (dataset licence section 7).
+
+    This repository's Apache-2.0 grant covers OUR SOURCE CODE ONLY. It confers
+    no rights whatsoever in the CUHK-X dataset.
+
+    ------------------------------------------------------------------------
+    Weights:  ircsn_ig65m-pretrained-r152-bnfrozen_8xb12-32x2x1-58e_kinetics400-rgb
+              (ir-CSN-152, IG-65M pretrained, Kinetics-400 fine-tuned, BN frozen)
+    Source:   https://download.openmmlab.com/mmaction/v1.0/recognition/csn/
+              ircsn_ig65m-pretrained-r152-bnfrozen_8xb12-32x2x1-58e_kinetics400-rgb/
+              ircsn_ig65m-pretrained-r152-bnfrozen_8xb12-32x2x1-58e_kinetics400-rgb
+              _20220811-7d1dacde.pth  (fetched 2026-08-28 06:42 JST on LABPC)
+    Licence:  Apache License 2.0 (open-mmlab/mmaction2), the same zoo and licence
+              as the shipped ir-CSN-R50 weights above.
+    sha256:   a02af4a3a1258bb8  (first 16 hex; full digest in DECISIONS m190)
+    Use:      QUEUE §49 / D19 (a): fold pricing of ir-CSN-152 as a thermal member;
+              then candidate 022 (QUEUE §51). IN THE SHIPPED ARTEFACT since
+              2026-08-29 (022 promoted through the R4 path, DECISIONS m203): the
+              thermal member of checkpoints/model.pth (named model.pt until
+              2026-08-31, P0 a), stored fp16 per R4; upstream
+              fp32 file 119,754,425 B. Disclosed (R1/R2). [Corrected 2026-08-31,
+              m217 — this entry previously said "NOT in any shipped artefact".]
+
+    ------------------------------------------------------------------------
+    Weights:  vmz_ipcsn_ig65m_pretrained_r152_32x2x1_58e_kinetics400_rgb_20210617-c3be9793.pth
+              (ip-CSN-152, IG-65M pretrained, Kinetics-400 fine-tuned, BN frozen; mmaction2's
+              conversion of the VMZ release ipCSN_152_ft_kinetics_from_ig65m_f133090949.pkl)
+    Source:   https://download.openmmlab.com/mmaction/recognition/csn/vmz/
+              vmz_ipcsn_ig65m_pretrained_r152_32x2x1_58e_kinetics400_rgb_20210617-c3be9793.pth
+              (fetched 2026-09-08 12:39 JST on LABPC, foreground, single-stream, into ~/csn)
+    Licence:  Apache License 2.0 (open-mmlab/mmaction2; its LICENSE fetched 2026-09-08, sha256
+              02c5c55e19772184...) hosting a conversion of Apache License 2.0 weights
+              (facebookresearch/VMZ, the CSN authors' original release; its LICENSE fetched
+              2026-09-08, sha256 4d10fe5f3aa176b0...) -- the same two-link chain as the shipped
+              ir-CSN-R50 entry above.
+    Gate:     PER-CHECKPOINT, BEFORE THE FETCH (GOAL-SPRINT-8 s7; QUEUE s113 STOP rule 3):
+              configs/recognition/csn/metafile.yml (main, fetched 2026-09-08 12:35 JST, sha256
+              6db7ab4fe44718dd...) documents THIS EXACT file at its lines 124-145 -- Name
+              ipcsn_ig65m-pretrained-r152-bnfrozen_32x2x1-58e_kinetics400-rgb; Parameters 33.02M;
+              Kinetics-400 top-1 82.68 / top-5 95.69; Converted From the VMZ Dropbox pkl, Code
+              facebookresearch/VMZ@b61b0819 -- so the repository licence attaches to the file
+              rather than being inferred by neighbourhood (the NOTICE:158-160 standard). The
+              config (ipcsn_ig65m-pretrained-r152-bnfrozen_32x2x1-58e_kinetics400-rgb.py) is the
+              ir-CSN-152 bnfrozen base with bottleneck_mode='ip'. NEGATIVE grep for
+              `non-commercial|research only|CC-BY-NC|academic use only` over BOTH LICENSE files:
+              0 hits; POSITIVE CONTROL: the same grep fires on this NOTICE (10) and on the r3
+              capture of Kaggle thread 738333 (1) -- the m59 form (~/cuhk-x/LICENSE, the earlier
+              control, no longer exists on this box).
+    sha256:   c3be979346a7fb45  (first 16 hex; full digest in DECISIONS m355)
+    Size:     133,006,791 B on disk (stat = ls = python), fp32, with its 400-way K400 head
+    Use:      QUEUE s113 (D48 (2), reading (alpha) -- the recorded amendment to D44 (2)): fold
+              pricing of ip-CSN-152 as the THERMAL member of the 022 shape, TRAINING PATH ONLY.
+              NOT IN ANY SHIPPED ARTEFACT; it would enter one only as candidate 023-ip through
+              the R4 path under P-B, and only if s113 clears its fused gate (>= +0.5 and 3/3,
+              then n = 6). Disclosed here AT THE MOMENT OF USE (R1/R2; the m217 (a) scar).
+              [Amended 2026-09-09 (DECISIONS m361; the final-pass rows from m367): QUEUE s113 MISSED its
+              3-cell screen on 2026-09-08 16:16 JST (fused -0.635 pp, 0/3 against >= +0.5 and 3/3);
+              no candidate 023-ip was built or scored, the section is CLOSED and the twelfth gated
+              contrast is spent. This weight is NOT in any shipped artefact and will NOT enter one.
+              It was used only in the training-path fold cells labpc_ip152stack_thermal_f{0,1,2}_s1
+              (never in an inference path; their SWAD sums freed at m361). The entry is kept as the
+              record of the fetch and of the licence chain read before it.]
+
+    ------------------------------------------------------------------------
+    Weights:  tsm_imagenet-pretrained-r50_8xb16-1x1x16-50e_sthv2-rgb
+              (TSM ResNet-50, ImageNet-1k init, Something-Something V2 trained, 16 segments)
+    Source:   https://download.openmmlab.com/mmaction/v1.0/recognition/tsm/
+              tsm_imagenet-pretrained-r50_8xb16-1x1x16-50e_sthv2-rgb/
+              tsm_imagenet-pretrained-r50_8xb16-1x1x16-50e_sthv2-rgb_20230317-ec6696ad.pth
+              (fetched 2026-08-30 09:5x JST on LABPC)
+    Licence:  Apache License 2.0 (open-mmlab/mmaction2), the same zoo and licence
+              as the shipped ir-CSN weights above.
+    sha256:   ec6696adf95e6d7a  (first 16 hex; full digest in DECISIONS m210)
+    Use:      QUEUE §61 / D22 (b): fold pricing of an SSv2-pretrained TSM-R50 as a
+              thermal member. NOT in any shipped artefact unless a candidate is
+              promoted through the R4 path; disclosed here in advance (R1/R2).
+
+    ------------------------------------------------------------------------
+    Weights:  vit-small-p16_videomaev2-vit-g-dist-k710-pre_16x4x1_kinetics-400
+              (VideoMAE V2 ViT-S/16, distilled from VideoMAE V2-g on Kinetics-710,
+              fine-tuned on Kinetics-400; 16 frames, tubelet 2; 21.88 M backbone
+              params + a 400-way head that is dropped at load)
+    Source:   https://download.openmmlab.com/mmaction/v1.0/recognition/videomaev2/
+              vit-small-p16_videomaev2-vit-g-dist-k710-pre_16x4x1_kinetics-400/
+              vit-small-p16_videomaev2-vit-g-dist-k710-pre_16x4x1_kinetics-400
+              _20230510-25c748fd.pth  (fetched 2026-08-31 11:47:54–56 JST on LABPC;
+              44,099,342 B)
+    Licence:  Apache License 2.0 (open-mmlab/mmaction2 — the re-host that is the
+              object we would ship; its README states the weights were "ported
+              from the repo VideoMAE V2"). Upstream: OpenGVLab/VideoMAEv2 is MIT
+              (LICENSE: "Copyright (c) 2023 OpenGVLab"); the distilled ViT-S/ViT-B
+              checkpoints are direct downloads on Hugging Face (OpenGVLab/VideoMAE2,
+              model-card licence field: apache-2.0, no gating); only the VideoMAE
+              V2-g teacher weights sit behind a download-request form and are NOT
+              used. No research-only or non-commercial clause on any of the three
+              sources (QUEUE §68 Gate 0, read 2026-08-31 11:4x JST, DECISIONS m225).
+              VideoMAE v1 weights (CC BY-NC 4.0) are a DIFFERENT project and are
+              not used.
+              [Corrected 2026-09-04, DECISIONS m281 / QUEUE §94 — the sentence above, "only the
+              VideoMAE V2-g teacher weights sit behind a download-request form and are NOT
+              used", was true when written (2026-08-31, m225) and is no longer: since
+              2026-09-03 the VideoMAE V2-g weights (vit_g_hybrid_pt_1200e_k710_ft) ARE on
+              this box, fetched from the self-serve Hugging Face mirror (the request form
+              still unused, D13 c) — see that entry below (QUEUE §89 candidate 5; from §94 a
+              FINE-TUNED distillation teacher). Never in any shipped artefact (R9 / FM3).]
+    sha256:   25c748fdd8691f04  (first 16 hex; full digest in DECISIONS m225)
+    Use:      QUEUE §68 / D23: fold pricing of VideoMAE V2 ViT-S as a thermal
+              member (a third backbone family; D1 re-opened under the D19
+              file-size reading). NOT in any shipped artefact unless a candidate
+              is promoted through the R4 path; disclosed here in advance (R1/R2).
+
+    ------------------------------------------------------------------------
+    Weights:  vit-base-p16_videomaev2-vit-g-dist-k710-pre_16x4x1_kinetics-400
+              (VideoMAE V2 ViT-B/16, distilled from VideoMAE V2-g on Kinetics-710,
+              fine-tuned on Kinetics-400; 16 frames, tubelet 2; 86.23 M backbone
+              params + a 400-way head that is dropped at load)
+    Source:   https://download.openmmlab.com/mmaction/v1.0/recognition/videomaev2/
+              vit-base-p16_videomaev2-vit-g-dist-k710-pre_16x4x1_kinetics-400/
+              vit-base-p16_videomaev2-vit-g-dist-k710-pre_16x4x1_kinetics-400
+              _20230510-3e7f93b2.pth  (fetched 2026-08-31 14:27:14–22 JST on LABPC;
+              173,101,070 B)
+    Licence:  Apache License 2.0 (open-mmlab/mmaction2 re-host); upstream
+              OpenGVLab/VideoMAEv2 MIT; Hugging Face card apache-2.0 — the same
+              three sources read for the ViT-S entry above (QUEUE §68 Gate 0,
+              DECISIONS m225); no research-only or non-commercial clause.
+    sha256:   3e7f93b2be64c7c1  (first 16 hex; full digest in DECISIONS m231)
+    Use:      QUEUE §74 / D24: a D6-GATED pricing arm — ViT-B as a single-member
+              thermal artefact. ~172 MB at fp16: it can ship ONLY as torch.ao
+              int8 (≈ 86 MB) and only if worth > 2 pp over the fused artefact
+              (D6). NOT in any shipped artefact unless a candidate is promoted
+              through the R4 path; disclosed here in advance (R1/R2).
+
+    Weights:  ircsn_from_scratch_r152_ig65m_20200807-771c4135
+              (ir-CSN-152 trained FROM SCRATCH on IG-65M — the Kinetics-400 stage NOT applied;
+              the file the shipped R152 weight's own mmaction2 config names as its `pretrained`)
+    Source:   https://download.openmmlab.com/mmaction/recognition/csn/
+              ircsn_from_scratch_r152_ig65m_20200807-771c4135.pth
+              (fetched 2026-09-01 00:28:40 JST–00:28:50 JST on LABPC; 116,303,675 B fp32)
+    Licence:  Apache License 2.0 (open-mmlab/mmaction2, LICENSE read 2026-09-01); ported from
+              facebookresearch/VMZ, Apache License 2.0 (LICENSE read 2026-09-01) — no research-only
+              or non-commercial clause. The same zoo, family and posture as the shipped ir-CSN-152
+              and the ir-CSN-R50 IG-65M file above.
+    sha256:   771c413539d9222d  (first 16 hex; full digest 771c413539d9222d2494f0a61b5512dbc66cae7f0cc99842660f98c5ea4117c5)
+    Use:      QUEUE §82 / D26: a probe-gated pretraining-axis ablation START (the K400 stage
+              dropped) for the thermal R152 stack recipe. NOT in any shipped artefact unless a
+              candidate is promoted through the R4 path; the packaged bytes are unchanged
+              (same architecture; the zoo head is dropped as today). Disclosed here at the
+              moment of download (R1/R2).
+
+    ========================================================================
+    QUEUE §89 / D27 — FROZEN FOUNDATION-MODEL PROBES (Gate 0, 2026-09-03 15:5x JST on LABPC).
+    PRICING-AND-TEACHING-ONLY weights (R3 distillation allowed; R9 "the large model must not be
+    part of the final inference model"): vision-only encoders, frozen; features are extracted
+    by tools/fm_extract.py and read by tools/fm_probe.py; NOTHING of them enters any shipped
+    checkpoint (the packer's key allowlist asserts it). Each entry is written BEFORE its first
+    byte is fetched; bytes and sha256 are filled in from the download log. Candidates CLOSED at
+    Gate 0, with the quote: Hiera-L/H (facebookresearch/hiera README: "the model weights are
+    licensed under the Creative Commons Attribution-NonCommercial 4.0 International License" —
+    an NC clause); InternVideo2-1B (HF card apache-2.0, repository Apache-2.0, but the HF
+    repository is GATED: "agree to share your contact information to access this model" — a
+    click-through under Arthur's own account, parked for his word, never done on his behalf).
+    ------------------------------------------------------------------------
+    Weights:  dinov2_vitl14_reg4_pretrain (DINOv2 ViT-L/14 distilled, with 4 registers; image
+              backbone, 0.3 B params; patch 14, 224² native; LVD-142M self-supervised)
+    Source:   https://dl.fbaipublicfiles.com/dinov2/dinov2_vitl14/dinov2_vitl14_reg4_pretrain.pth
+              (fetched 2026-09-03 15:52:32 JST on LABPC; 1,217,607,321 B; sha256 36e4deffbaef061a2576705b0c36f93621e2ae20bf6274694821b0b492551b51)
+    Licence:  Apache License 2.0 — facebookresearch/dinov2 README: "DINOv2 code and model weights
+              are released under the Apache License 2.0" (read 2026-09-03); Hugging Face card
+              facebook/dinov2-large: "apache-2.0" (read 2026-09-03). No NC / research-only clause
+              (those apply to Cell-DINO / XRay-DINO only, which are not fetched).
+    Use:      QUEUE §89 candidate (1): frozen per-frame features (CLS, mean-patch, 2×2 pooled
+              patches) on the three streams; a probe / teacher only.
+
+    Weights:  dinov2_vitg14_reg4_pretrain (DINOv2 ViT-g/14 with 4 registers; image backbone,
+              1.1 B params; patch 14, 224² native)
+    Source:   https://dl.fbaipublicfiles.com/dinov2/dinov2_vitg14/dinov2_vitg14_reg4_pretrain.pth
+              (fetched 2026-09-03 16:05:55 JST on LABPC; 4,546,140,349 B; sha256 746ecb8c6301c645c5c855be91687d274587d6e48fdaec4a729753160b34a283)
+    Licence:  Apache License 2.0 — the same README statement and card family as above.
+    Use:      QUEUE §89 candidate (1), the giant; a probe / teacher only.
+
+    Weights:  vjepa2_vitl (V-JEPA 2 ViT-L/16 video encoder, 0.3 B params; 256² native, tubelet 2,
+              patch 16; self-supervised on video, no text or language component)
+    Source:   https://dl.fbaipublicfiles.com/vjepa2/vitl.pt
+              (fetched 2026-09-03 15:53:38 JST on LABPC; 5,127,726,842 B; sha256 5346856ec9df69487fe72a25bf2632aaa8112df33fb67708e3f7374edc1f7012)
+              reduced on disk after verification to the two entries the hub loader reads (target_encoder + predictor; dropped ['batch_size', 'encoder', 'loss', 'lr', 'opt', 'scaler', 'world_size']): 1,304,063,869 B, sha256 596d130f41c1ca709f66320bd47cea0de5971af35ce466b67f884906cbc74dc6 — the original deleted for disk (D28 c); the encoder tensors are byte-identical to the original's target_encoder entry
+    Licence:  MIT — facebookresearch/vjepa2 README: "The majority of V-JEPA 2 is licensed under
+              MIT, however portions of the project are available under separate license terms"
+              (three utility files, Apache 2.0); the checkpoints are released under the same MIT
+              licence; Hugging Face card facebook/vjepa2-vitl-fpc64-256: "mit" (both read
+              2026-09-03). No NC / research-only clause.
+    Use:      QUEUE §89 candidate (3): frozen video tokens pooled to (T′, 2, 2) + the global mean
+              per stream; a probe / teacher only.
+
+    Weights:  vjepa2_vitg (V-JEPA 2 ViT-g/16 video encoder, 1 B params; 256² native)
+    Source:   https://dl.fbaipublicfiles.com/vjepa2/vitg.pt
+              (fetched 2026-09-03 16:17:33 JST on LABPC; 16,464,208,210 B; sha256 67129f011434e605d894e69f2c8e13d9db118deabe59d54bf6e0fa62c2c5cb8e)
+              reduced on disk after verification to the two entries the hub loader reads (target_encoder + predictor; dropped ['batch_size', 'encoder', 'loss', 'lr', 'opt', 'scaler', 'world_size']): 4,138,474,301 B, sha256 3c21743160afb904be2df4f1a80c5efd984584db5500a1ef3c19708ecca1ea76 — the original deleted for disk (D28 c); the encoder tensors are byte-identical to the original's target_encoder entry
+    Licence:  MIT — as above.
+    Use:      QUEUE §89 candidate (3), the giant; a probe / teacher only.
+
+    Weights:  vit_g_hybrid_pt_1200e_k710_ft (VideoMAE V2 ViT-g/14, hybrid-pretrained 1200 epochs,
+              fine-tuned on Kinetics-710; video backbone, 1.0 B params; 16 frames × 224², tubelet 2)
+    Source:   https://huggingface.co/OpenGVLab/VideoMAE2/resolve/main/mae-g/vit_g_hybrid_pt_1200e_k710_ft.pth
+              (the OpenGVLab Hugging Face mirror, self-serve — the GitHub MODEL_ZOO's Google
+              request form is NOT used, D13 c; the HEAD request answered 200 with no auth challenge;
+              fetched 2026-09-03 15:56:54 JST on LABPC; 2,025,314,665 B; sha256 4c1b3fb76612bd5b767b82578833189c3fc83d351a9a25f0dcb2d9e2776ed8b3)
+    Licence:  Hugging Face repository OpenGVLab/VideoMAE2: "apache-2.0" (read 2026-09-03);
+              upstream OpenGVLab/VideoMAEv2 MIT — the same two sources read for the distilled
+              ViT-S / ViT-B entries above (m225). No NC / research-only clause.
+    Use:      QUEUE §89 candidate (5): frozen video tokens as above; a probe / teacher only.
+    Use (amended 2026-09-04, QUEUE §94 / D29 / DECISIONS m281): additionally FINE-TUNED (a
+              weight-tied tail of blocks 32–39 + final norm + three 40-way heads) on the
+              competition's own train split as a distillation teacher. The derived weights
+              are never distributed, packaged or shipped (R9 / FM3); only their soft targets
+              influence the shipped students (R3). Apache-2.0 imposes no obligation on
+              undistributed derivatives and has no clause on model outputs.
+    ========================================================================
+
+    ------------------------------------------------------------------------
+    Weights:  1B_ft_k710_ft_k400_f16 (InternVideo2 single-modality ViT-1B/14, K-Mash pretrained →
+              K710 → K400 fine-tuned, 16 frames × 224², tubelet 1; a pure vision encoder — no text
+              tower; 1.0 B params + the attention-pool head and a 400-way classifier)
+    Source:   https://huggingface.co/OpenGVLab/InternVideo2-Stage1-1B-224p-f8-K400/resolve/main/1B_ft_k710_ft_k400_f16.pth
+              (GATED: the repository asks the downloader to share contact details; accepted by
+              Arthur under his own account on 2026-09-03 ("the HF is enabled, and I logged in with
+              the same account"); fetched 2026-09-03 16:47:06–16:50:13 JST on LABPC with his token;
+              2,047,906,867 B; sha256 46f7f3e11ca9dcb26c29ab412d0c32db2aad4fc66b5310f9c4457c8a01be2349)
+    Licence:  Hugging Face card OpenGVLab/InternVideo2-Stage1-1B-224p-f8-K400: "apache-2.0" (read
+              2026-09-03); repository OpenGVLab/InternVideo LICENSE: Apache License 2.0 (read
+              2026-09-03; no research-only or non-commercial clause). Model code vendored under
+              tools/vendor/internvideo2/ (Apache-2.0, LICENSE alongside; three flash-attn imports
+              stubbed, the fused flags off).
+    Use:      QUEUE §89 candidate (4): frozen video tokens pooled to (16, 2, 2) + the global mean per
+              stream; a probe / teacher only. NOT in any shipped artefact (R9).

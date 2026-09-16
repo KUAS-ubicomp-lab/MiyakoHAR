@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below, and cite the CUHK-X dataset paper (see README)."
+title: "MiyakoHAR: cross-subject human activity recognition from depth, infrared and thermal video"
+type: software
+version: 1.0.0
+date-released: 2026-09-16
+license: Apache-2.0
+repository-code: "https://github.com/KUAS-ubicomp-lab/MiyakoHAR"
+abstract: >-
+  Team MiyakoHAR's solution to the CUHK-X 2026 Multimodal Human Activity Challenge,
+  Small Model Track: two channel-separated 3D convolutional networks (ir-CSN-R50 on the
+  depth and infrared streams, ir-CSN-152 on the thermal stream) fused at the probability
+  level and packaged in one 83.6 MB file. Private leaderboard score 0.78921, 39th place.
+authors:
+  - family-names: Koo
+    given-names: Joseph Arthur
+    affiliation: "Ubiquitous and Personal Computing Lab, Kyoto University of Advanced Science"
+  - family-names: Toendan
+    given-names: Ken Argani
+    affiliation: "Ubiquitous and Personal Computing Lab, Kyoto University of Advanced Science"
+  - family-names: Hoang
+    given-names: Nhung Huyen
+    affiliation: "Ubiquitous and Personal Computing Lab, Kyoto University of Advanced Science"
+  - family-names: Liang
+    given-names: Zilu
+    affiliation: "Ubiquitous and Personal Computing Lab, Kyoto University of Advanced Science"
+keywords:
+  - human activity recognition
+  - cross-subject
+  - depth video
+  - thermal imaging
+  - channel-separated convolutional networks
+  - CUHK-X

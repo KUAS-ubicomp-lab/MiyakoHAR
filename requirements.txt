@@ -1,0 +1,34 @@
+# CUHK-X Small Model Track — pinned environment.
+#
+# Written 2026-08-15 as part of §J-DQ defect (a). inference.sh's failure message
+# tells the committee how to rebuild the interpreter; before this file existed it
+# pointed at nothing, so the instruction was unfollowable and the run that could
+# not import torch had no documented way back.
+#
+# Versions are the ones every number in RESULTS.md and experiments-alien.jsonl
+# was measured on. Read off the working .venv, not chosen.
+#
+# INTERPRETER: CPython 3.12.13. Every number in RESULTS.md was produced on it.
+# Recorded here because a pinned dependency set without a pinned interpreter is
+# only most of a pin -- and because the rehearsal that found this ALSO found that
+# `python3 -m venv` fails outright on a system Python with no ensurepip, which is
+# the command inference.sh's own recovery message tells you to run. That message
+# now names the three ways round it. A recovery instruction that does not work is
+# the same defect as §J-DQ (a), in a different place.
+#
+# ── inference path (what inference.sh -> src/predict.py actually imports) ─────
+# Asserted by execution, not by inspection: tests/test_inference_robustness.sh
+# runs the real entry point with a poisoned `yaml` module on PYTHONPATH, so a
+# PyYAML import anywhere it reaches raises. PyYAML is therefore NOT here.
+torch==2.13.0
+torchvision==0.28.0
+numpy==2.4.4
+Pillow==12.2.0
+
+# ── training only (never reached from inference.sh) ──────────────────────────
+# dataset.py reads splits/folds.yaml, but lazily and only on the training path.
+# Install with:  pip install -r requirements.txt PyYAML==6.0.3
+#
+# The CUDA build matters for reproducing timings, not results: this box ran
+# torch 2.13.0+cu129 / torchvision 0.28.0+cu129 on an RTX 5060 Laptop (sm_120).
+# CPU wheels reproduce every accuracy number; they do not reproduce train_hours.
