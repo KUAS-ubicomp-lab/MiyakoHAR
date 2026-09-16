@@ -37,11 +37,16 @@ The CUHK-X dataset is the property of the AIoT Lab, Department of Information
 Engineering, The Chinese University of Hong Kong, and is licensed under the
 **CUHK-X License Version 2.0**: non-commercial research use only, no redistribution
 in any form, in whole or in part. The owner's derived annotations, splits and
-metadata are under CC BY-NC 4.0. Nothing from the dataset is in this repository
-([data.md](data.md)); `.gitignore` excludes every corpus path and image extension.
-The two submitted CSVs and the fold split under version control are our own
-derivations (our predictions per test clip, and our assignment of subject numbers
-to folds) and contain no dataset content.
+metadata are under CC BY-NC 4.0. No frame, sensor file or derived cache from the
+dataset is in this repository ([data.md](data.md)); `.gitignore` excludes every
+corpus path and image extension. The two submitted CSVs and the fold split under
+version control are our own derivations (our predictions per test clip, and our
+assignment of subject numbers to folds) and contain no dataset content. The
+held-out prediction tables under `evaluation/` are also ours, but they name each
+training clip by the directory path that carries its label; those paths and
+labels are the owner's annotations, reproduced with attribution for
+non-commercial research as CC BY-NC 4.0 permits
+([held-out-predictions.md](held-out-predictions.md)).
 
 The licence's attribution clause requires that any publication, presentation,
 model or other work that uses the data cite the CUHK-X paper and acknowledge the

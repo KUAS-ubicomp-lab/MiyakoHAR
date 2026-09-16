@@ -164,7 +164,9 @@ no exposure to test data:
 
 Standard deviation of the difference 1.141, t = +3.68, 6 of 6 cells positive. The
 instrument decides which recipe to ship; the members that ship are then retrained
-on all 18 subjects (Section "The recipe").
+on all 18 subjects (Section "The recipe"). The per-clip predictions of all twelve
+cells are in `evaluation/fold_predictions_022_026.csv`
+([held-out-predictions.md](held-out-predictions.md)).
 
 ## Compute
 

@@ -68,10 +68,11 @@ with a freshly built environment, 405 of 405 rows identical.
 | `train.sh` | Rebuilds the two trained networks from the training corpus. |
 | `verify.sh` | Reproduction check: re-runs inference and diffs against a submitted CSV. |
 | `src/` | The model (`model.py`, `csn.py`), decoding and sampling (`preprocess.py`, `dataset.py`), the predictor (`predict.py`), the trainer (`train.py`, `swad.py`, `pk_sampler.py`), the corpus index (`manifest.py`). `imu_data.py`, `skeleton_data.py`, `person_crop.py` and `vmae.py` are development paths that no released model uses. |
-| `tools/` | `package.py` packs trained members into the single inference file and weighs it; `package_int8.py` is its int8 variant; `freshclone_rehearsal.sh` runs the committee's procedure end to end; `derive_index_from_cache.py` and `p0d_efficiency.py` support training and benchmarking. |
+| `tools/` | `package.py` packs trained members into the single inference file and weighs it; `package_int8.py` is its int8 variant; `freshclone_rehearsal.sh` runs the committee's procedure end to end; `derive_index_from_cache.py` and `p0d_efficiency.py` support training and benchmarking; `fold_predictions.py` and `fold_tables.py` produce the tables under `evaluation/`. |
 | `tests/` | Eleven checks on the model code, the packaged file and the entry point (offline, robustness, statelessness). See [docs/inference-and-deployment.md](docs/inference-and-deployment.md#tests). |
 | `splits/folds.yaml` | The frozen leave-6-subjects-out split behind every model-selection decision. |
 | `submissions/` | The two final CSVs that `verify.sh` compares against. |
+| `evaluation/` | Held-out predictions of both final recipes for every training clip, with the accuracy, confusion and clip-count tables derived from them. See [docs/held-out-predictions.md](docs/held-out-predictions.md). |
 | `requirements.txt` | The pinned inference environment. `environment-labpc.txt` and `environment-alien.txt` are the full package lists of the two training machines. |
 | `NOTICE` | Every third-party component and pretrained weight, with its licence. |
 | `docs/` | The documentation listed below. |
@@ -89,6 +90,7 @@ release as `model-026.pth`, `model-022.pth` and `SHA256SUMS`.
 | [docs/training.md](docs/training.md) | The recipe and hyper-parameters, compute, how to retrain and repackage, and the validation instrument. |
 | [docs/inference-and-deployment.md](docs/inference-and-deployment.md) | Input contract, command line, Python API, timings and memory, the model file format, failure behaviour, tests. |
 | [docs/results.md](docs/results.md) | Leaderboard results, every submission, the validation instrument, and how measured gains transferred. |
+| [docs/held-out-predictions.md](docs/held-out-predictions.md) | The per-clip held-out predictions of both final recipes, accuracy per activity and per subject, the confusion matrix, and the training clips per activity and subject. |
 | [docs/experiments-summary.md](docs/experiments-summary.md) | What was tried over five weeks, what worked, what did not, and why. |
 | [docs/compliance-and-licensing.md](docs/compliance-and-licensing.md) | Licences of code, weights and data; the competition's constraints and how each is met. |
 | [docs/technical-description-022-026.pdf](docs/technical-description-022-026.pdf) | The 16-page technical description of both finals, written for the competition's verification committee. |

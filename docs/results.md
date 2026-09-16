@@ -133,6 +133,11 @@ same cells, +1.715 points (t = +3.68, 6 of 6 cells). Because every released memb
 was then retrained on all 18 subjects, clips of those subjects are in-sample for
 the released models and are not comparable to these held-out figures.
 
+The per-clip predictions behind these figures, for both recipes and both seeds,
+are in `evaluation/fold_predictions_022_026.csv`, with the accuracy per activity
+and per subject and the confusion matrices derived from them; see
+[held-out-predictions.md](held-out-predictions.md).
+
 ## What the leaderboard attributed, on the S3D family
 
 From the decomposed submissions 008 to 012, with one change at a time:

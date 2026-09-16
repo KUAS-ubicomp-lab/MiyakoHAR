@@ -69,7 +69,9 @@ recipe scores 72.7% clip-weighted over the 18 subjects; the 026 recipe scores
 74.4%, an improvement of +1.715 percentage points (t = +3.68 over the six
 subject-disjoint cells, 6 of 6 positive). Per-subject accuracy of the 022 recipe
 ranges from 62.41% (subject 21) to 83.69% (subject 9), a between-subject standard
-deviation of 6.2 points. The full tables are in [results.md](results.md).
+deviation of 6.2 points. The full tables are in [results.md](results.md); the
+accuracy per activity, the confusion matrix and the per-clip held-out predictions
+are in [held-out-predictions.md](held-out-predictions.md).
 
 **Factors.** The dominant factor is the subject. Two of the 18 training subjects
 sit more than 7.3 points below the mean on their own, and the same model spans 21

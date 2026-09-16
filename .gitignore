@@ -1,6 +1,8 @@
 # Dataset: the CUHK-X corpus is licensed for non-commercial research and is not
-# redistributable (CUHK-X License v2.0, section 5). Nothing derived from it may
-# enter this repository. The rules below enforce that by directory and by extension.
+# redistributable (CUHK-X License v2.0, section 5). No frame, sensor file or
+# derived cache may enter this repository; the rules below enforce that by
+# directory and by extension. The one tracked derivation that names training clips
+# and their labels is evaluation/ (see docs/held-out-predictions.md).
 data/
 extracted/
 test_extracted/
